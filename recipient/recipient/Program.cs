@@ -26,6 +26,7 @@ namespace recipient
         static RSACryptoServiceProvider RSARecipient = new RSACryptoServiceProvider();
         static MessageEncryptedClass MsgEncrypted = new MessageEncryptedClass();
         static RSAParameters PublicKey;
+        static RSAParameters ReceivedPublicKey;
 
         static void Main(string[] args)
         {
@@ -67,7 +68,10 @@ namespace recipient
 		//Rep la clau pública de l'emissor
         static void RepClauPublica()
         {
+            byte[] receivedBuffer = new byte[256];
+            int receivedBytes = ClientNS.Read(receivedBuffer, 0, receivedBuffer.Length);
 
+            ReceivedPublicKey = (RSAParameters)Deserialize(receivedBuffer);
         }
 
 		//Rep el missatge encriptat
