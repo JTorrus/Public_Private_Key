@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using MessageEncryptedNS;
+using static SerializeUtils.SerializeUtils;
 
 namespace recipient
 {
@@ -57,6 +58,9 @@ namespace recipient
         static void EnviarClauPublica()
         {
             PublicKey = RSARecipient.ExportParameters(false);
+            byte[] publicKeyBytes = Serialize(PublicKey);
+
+            ClientNS.Write(publicKeyBytes, 0, publicKeyBytes.Length);
 
         }
 

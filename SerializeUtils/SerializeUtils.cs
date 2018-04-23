@@ -10,7 +10,7 @@ namespace SerializeUtils
 {
     public class SerializeUtils
     {
-        public byte[] Serialize(object objectToSerialize)
+        public static byte[] Serialize(object objectToSerialize)
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             MemoryStream memoryStream = new MemoryStream();
@@ -21,7 +21,7 @@ namespace SerializeUtils
             return bytesToSend;
         }
 
-        public object Deserialize(byte[] bytesToDeserialize)
+        public static object Deserialize(byte[] bytesToDeserialize)
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             MemoryStream memoryStream = new MemoryStream();
