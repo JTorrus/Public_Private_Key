@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "recipient", "recipient\recipient\recipient.csproj", "{63EB6644-8188-4D9F-84C0-9A4640EB82DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageEncrypted", "MessageEncrypted\MessageEncrypted.csproj", "{F2082E78-83AD-4EFC-943C-64931000D9E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sender", "emissor\emissor\sender.csproj", "{030D306B-7FCC-4F8E-9DA6-81BD18E8A0F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63EB6644-8188-4D9F-84C0-9A4640EB82DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63EB6644-8188-4D9F-84C0-9A4640EB82DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63EB6644-8188-4D9F-84C0-9A4640EB82DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63EB6644-8188-4D9F-84C0-9A4640EB82DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2082E78-83AD-4EFC-943C-64931000D9E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2082E78-83AD-4EFC-943C-64931000D9E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2082E78-83AD-4EFC-943C-64931000D9E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2082E78-83AD-4EFC-943C-64931000D9E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{030D306B-7FCC-4F8E-9DA6-81BD18E8A0F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{030D306B-7FCC-4F8E-9DA6-81BD18E8A0F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{030D306B-7FCC-4F8E-9DA6-81BD18E8A0F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{030D306B-7FCC-4F8E-9DA6-81BD18E8A0F5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
