@@ -77,6 +77,10 @@ namespace recipient
 		//Rep el missatge encriptat
         static void ReceiveEncryptedMessage()
         {
+            byte[] receivedBuffer = new byte[256];
+            int receivedBytes = ClientNS.Read(receivedBuffer, 0, receivedBuffer.Length);
+
+            MsgEncrypted = (MessageEncryptedClass)Deserialize(receivedBuffer);
         }
 
 		//Desxifra el missatge
