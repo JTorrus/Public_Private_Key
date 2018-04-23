@@ -56,6 +56,8 @@ namespace recipient
 		//Envia la clau pública a l'emissor
         static void EnviarClauPublica()
         {
+            PublicKey = RSARecipient.ExportParameters(false);
+
         }
 
 		//Rep la clau pública de l'emissor
