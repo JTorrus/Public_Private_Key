@@ -28,6 +28,12 @@ namespace recipient
         static RSAParameters PublicKey;
         static RSAParameters ReceivedPublicKey;
 
+        //Desencriptació
+        static string DecryptedIV;
+        static string DecryptedPublicKey;
+        static string DecryptedSymmetricKey;
+        static string DecryptedMessage;
+
         static void Main(string[] args)
         {
 			ConnectToServer();
@@ -85,15 +91,26 @@ namespace recipient
 
 		//Desxifra el missatge
         static void DesxifrarMissatge()
-        {            
+        {
 
-			//1. Desencripta la clau simètrica (key + IV)
+            //1. Desencripta la clau simètrica (key + IV)
+            DecryptedIV = BytesToStringHex(MsgEncrypted.EncryptedIV);
+            DecryptedPublicKey = BytesToStringHex(MsgEncrypted.EncryptedKey);
 
+            DecryptedSymmetricKey = DecryptedPublicKey + DecryptedIV;
 
-			//2. Desencriptem el missatge
+            //2. Desencriptem el missatge
+            DecryptedMessage = BytesToStringHex(MsgEncrypted.EncryptedMsg);
 
-
-            //3. Comprovació de la integritat.  
+            //3. Comprovació de la integritat.
+            if (VerifySignedHash(MsgEncrypted.EncryptedMsg, MsgEncrypted.SignedHash, ReceivedPublicKey))
+            {
+                Console.WriteLine(DecryptedMessage);
+            }
+            else
+            {
+                Console.WriteLine("No s'ha pogut verificar la integritat del hash");
+            }
 
         }
 
@@ -105,6 +122,19 @@ namespace recipient
                 stringBuilder.AppendFormat("{0:x2}", b);
 
             return stringBuilder.ToString();
+        }
+
+        static bool VerifySignedHash(byte[] DataToVerify, byte[] SignedData, RSAParameters Key)
+        {
+            try
+            {
+                RSARecipient.ImportParameters(Key);
+                return RSARecipient.VerifyData(DataToVerify, new SHA1CryptoServiceProvider(), SignedData);
+            }
+            catch (CryptographicException e)
+            {
+                return false;
+            }
         }
     }
 }
