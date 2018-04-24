@@ -54,6 +54,10 @@
       <Project>{f2082e78-83ad-4efc-943c-64931000d9e5}</Project>
       <Name>MessageEncrypted</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\SerializeUtils\SerializeUtils.csproj">
+      <Project>{351b0538-ee9b-43d9-906a-fbc2b0867800}</Project>
+      <Name>SerializeUtils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

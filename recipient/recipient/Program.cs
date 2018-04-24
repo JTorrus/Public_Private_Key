@@ -94,10 +94,11 @@ namespace recipient
         {
 
             //1. Desencripta la clau simètrica (key + IV)
-            DecryptedIV = BytesToStringHex(MsgEncrypted.EncryptedIV);
-            DecryptedPublicKey = BytesToStringHex(MsgEncrypted.EncryptedKey);
+            byte[] DecryptedIVBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedIV, false);
+            byte[] DecryptedKeyBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedKey, false);
 
-            DecryptedSymmetricKey = DecryptedPublicKey + DecryptedIV;
+            DecryptedIV = BytesToStringHex(DecryptedIVBytes);
+            DecryptedPublicKey = BytesToStringHex(DecryptedKeyBytes);
 
             //2. Desencriptem el missatge
             DecryptedMessage = BytesToStringHex(MsgEncrypted.EncryptedMsg);
