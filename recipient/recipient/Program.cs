@@ -91,6 +91,9 @@ namespace recipient
 		//Desxifra el missatge
         static void DesxifrarMissatge()
         {
+            RSACryptoServiceProvider RSAReceived = new RSACryptoServiceProvider();
+            RSAReceived.ImportParameters(ReceivedPublicKey);
+
             //1. Desencripta la clau simètrica (key + IV)
             byte[] DecryptedIVBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedIV, false);
             byte[] DecryptedKeyBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedKey, false);
@@ -102,15 +105,7 @@ namespace recipient
             DecryptedMessage = BytesToStringHex(MsgEncrypted.EncryptedMsg);
 
             //3. Comprovació de la integritat.
-            if (VerifySignedHash(MsgEncrypted.EncryptedMsg, MsgEncrypted.SignedHash, ReceivedPublicKey))
-            {
-                Console.WriteLine(DecryptedMessage);
-            }
-            else
-            {
-                Console.WriteLine("No s'ha pogut verificar la integritat del hash");
-            }
-
+            
         }
 
         static string BytesToStringHex(byte[] result)
@@ -121,19 +116,6 @@ namespace recipient
                 stringBuilder.AppendFormat("{0:x2}", b);
 
             return stringBuilder.ToString();
-        }
-
-        static bool VerifySignedHash(byte[] DataToVerify, byte[] SignedData, RSAParameters Key)
-        {
-            try
-            {
-                RSARecipient.ImportParameters(Key);
-                return RSARecipient.VerifyData(DataToVerify, new SHA1CryptoServiceProvider(), SignedData);
-            }
-            catch (CryptographicException e)
-            {
-                return false;
-            }
         }
     }
 }
