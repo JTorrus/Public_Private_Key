@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using MessageEncryptedNS;
+using static SerializeUtils.SerializeUtils;
 
 namespace sender
 {
@@ -23,9 +24,11 @@ namespace sender
 
         //Algorisme clau pública - privada
         static RSACryptoServiceProvider RSASender = new RSACryptoServiceProvider();
+        static RSACryptoServiceProvider RSAReceiver = new RSACryptoServiceProvider();
         
         //Permet guardar informació de claus asimètriques
         static RSAParameters PublicKeyRecipient;
+        static RSAParameters ReceivedPublicKey;
 
         //Custom object per guardar tota la informació del missatge
         static MessageEncryptedClass MsgEncrypted = new MessageEncryptedClass();
@@ -75,21 +78,22 @@ namespace sender
         static void RepClauPublica()
         {
             //1. Read del Socket
+            byte[] receivedBuffer = new byte[256];
+            int receivedBytes = ServerNS.Read(receivedBuffer, 0, receivedBuffer.Length);
 
             //2. Deserialitzem sobre la variable PublicKeyRecipient
-       
-            
-
+            ReceivedPublicKey = (RSAParameters)Deserialize(receivedBuffer);
         }
 
         //Enviam la clau pública del servidor al client
         static void EnviarClauPublica()
         {
             //1. Serialitzem la clau pública de l'emissor
-
+            RSAParameters PublicKeySender = RSASender.ExportParameters(false);
+            byte[] PublicKeyBytes = Serialize(PublicKeySender);
 
             //2. Enviem (write sobre Socket) la clau pública al receptor
-
+            ServerNS.Write(PublicKeyBytes, 0, PublicKeyBytes.Length);
         }
 
         //Xifrem el missatge
@@ -97,17 +101,39 @@ namespace sender
         {
             //1. Signatura del missatge
             
+            // TESTS
+            /*string PrivateKeyString = RSASender.ToXmlString(true);
+            RSASender.FromXmlString(PrivateKeyString);
+
+            RSAPKCS1SignatureFormatter RSAFormatter = new RSAPKCS1SignatureFormatter(RSASender);
+            RSAFormatter.SetHashAlgorithm("SHA1");
+
+            SHA1Managed HashSHA1 = new SHA1Managed();
+            byte[] SignedHashValue = RSAFormatter.CreateSignature(HashSHA1.ComputeHash(new UnicodeEncoding().GetBytes(msg)));*/
+
+            byte[] MsgToBytes = Encoding.UTF8.GetBytes(msg);
+            MsgEncrypted.SignedHash = RSASender.SignData(MsgToBytes, new SHA1CryptoServiceProvider());
 
             //2. Encriptació missatge 
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+            aes.GenerateIV();
+            aes.GenerateKey();
 
+            var cryptor = aes.CreateEncryptor();
+            byte[] MsgEncryptedBytes = cryptor.TransformFinalBlock(MsgToBytes, 0, MsgToBytes.Length);
+
+            MsgEncrypted.EncryptedMsg = MsgEncryptedBytes;
 
             //3. Encriptació de la clau 
+            RSAReceiver.ImportParameters(ReceivedPublicKey);
+
+            MsgEncrypted.EncryptedIV = RSAReceiver.Encrypt(aes.IV, true);
+            MsgEncrypted.EncryptedKey = RSAReceiver.Encrypt(aes.Key, true);
 
             Console.WriteLine("SignedHash: {0}", BytesToStringHex(MsgEncrypted.SignedHash));
             Console.WriteLine("Encrypted Message: {0}", BytesToStringHex(MsgEncrypted.EncryptedMsg));
             Console.WriteLine("Encrypted Key: {0}", BytesToStringHex(MsgEncrypted.EncryptedKey));
             Console.WriteLine("Encrypted IV: {0}", BytesToStringHex(MsgEncrypted.EncryptedIV));
-
 
             //4. Enviar objecte MsgEncrypted al client
 

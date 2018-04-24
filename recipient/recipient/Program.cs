@@ -68,7 +68,6 @@ namespace recipient
             byte[] publicKeyBytes = Serialize(PublicKey);
 
             ClientNS.Write(publicKeyBytes, 0, publicKeyBytes.Length);
-
         }
 
 		//Rep la clau pública de l'emissor
