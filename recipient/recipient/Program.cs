@@ -91,7 +91,6 @@ namespace recipient
 		//Desxifra el missatge
         static void DesxifrarMissatge()
         {
-
             //1. Desencripta la clau simètrica (key + IV)
             byte[] DecryptedIVBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedIV, false);
             byte[] DecryptedKeyBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedKey, false);
