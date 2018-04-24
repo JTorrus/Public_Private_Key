@@ -134,9 +134,6 @@ namespace sender
             Console.WriteLine("Encrypted Message: {0}", BytesToStringHex(MsgEncrypted.EncryptedMsg));
             Console.WriteLine("Encrypted Key: {0}", BytesToStringHex(MsgEncrypted.EncryptedKey));
             Console.WriteLine("Encrypted IV: {0}", BytesToStringHex(MsgEncrypted.EncryptedIV));
-
-            //4. Enviar objecte MsgEncrypted al client
-
         }
 
         /// <summary>
@@ -145,7 +142,9 @@ namespace sender
         /// </summary>
         public static void EnviarMissatgeEncriptat()
         {
+            byte[] SerializedMsg = Serialize(MsgEncrypted);
 
+            ServerNS.Write(SerializedMsg, 0, SerializedMsg.Length);
         }
 
         static string BytesToStringHex(byte[] result)
