@@ -78,11 +78,11 @@ namespace sender
         static void RepClauPublica()
         {
             //1. Read del Socket
-            byte[] receivedBuffer = new byte[256];
-            int receivedBytes = ServerNS.Read(receivedBuffer, 0, receivedBuffer.Length);
+            byte[] ReceivedBuffer = new byte[2046];
+            int ReceivedBytes = ServerNS.Read(ReceivedBuffer, 0, ReceivedBuffer.Length);
 
             //2. Deserialitzem sobre la variable PublicKeyRecipient
-            ReceivedPublicKey = (RSAParameters)Deserialize(receivedBuffer);
+            ReceivedPublicKey = (RSAParameters)Deserialize(ReceivedBuffer);
         }
 
         //Enviam la clau pública del servidor al client
@@ -115,20 +115,20 @@ namespace sender
             MsgEncrypted.SignedHash = RSASender.SignData(MsgToBytes, new SHA1CryptoServiceProvider());
 
             //2. Encriptació missatge 
-            AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
-            aes.GenerateIV();
-            aes.GenerateKey();
+            AesCryptoServiceProvider Aes = new AesCryptoServiceProvider();
+            Aes.GenerateIV();
+            Aes.GenerateKey();
 
-            var cryptor = aes.CreateEncryptor();
-            byte[] MsgEncryptedBytes = cryptor.TransformFinalBlock(MsgToBytes, 0, MsgToBytes.Length);
+            var Cryptor = Aes.CreateEncryptor();
+            byte[] MsgEncryptedBytes = Cryptor.TransformFinalBlock(MsgToBytes, 0, MsgToBytes.Length);
 
             MsgEncrypted.EncryptedMsg = MsgEncryptedBytes;
 
             //3. Encriptació de la clau 
             RSAReceiver.ImportParameters(ReceivedPublicKey);
 
-            MsgEncrypted.EncryptedIV = RSAReceiver.Encrypt(aes.IV, true);
-            MsgEncrypted.EncryptedKey = RSAReceiver.Encrypt(aes.Key, true);
+            MsgEncrypted.EncryptedIV = RSAReceiver.Encrypt(Aes.IV, true);
+            MsgEncrypted.EncryptedKey = RSAReceiver.Encrypt(Aes.Key, true);
 
             Console.WriteLine("SignedHash: {0}", BytesToStringHex(MsgEncrypted.SignedHash));
             Console.WriteLine("Encrypted Message: {0}", BytesToStringHex(MsgEncrypted.EncryptedMsg));

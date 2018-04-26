@@ -13,27 +13,27 @@ namespace SerializeUtils
     {
         public static byte[] Serialize(object objectToSerialize)
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            MemoryStream memoryStream = new MemoryStream();
+            BinaryFormatter BinFormatter = new BinaryFormatter();
+            MemoryStream MemStream = new MemoryStream();
 
-            binaryFormatter.Serialize(memoryStream, objectToSerialize);
-            byte[] bytesToSend = memoryStream.ToArray();
+            BinFormatter.Serialize(MemStream, objectToSerialize);
+            byte[] bytesToSend = MemStream.ToArray();
 
-            memoryStream.Close();
+            MemStream.Close();
 
             return bytesToSend;
         }
 
         public static object Deserialize(byte[] bytesToDeserialize)
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            MemoryStream memoryStream = new MemoryStream();
+            BinaryFormatter BinFormatter = new BinaryFormatter();
+            MemoryStream MemStream = new MemoryStream();
 
-            memoryStream.Write(bytesToDeserialize, 0, bytesToDeserialize.Length);
-            memoryStream.Seek(0, SeekOrigin.Begin);
+            MemStream.Write(bytesToDeserialize, 0, bytesToDeserialize.Length);
+            MemStream.Seek(0, SeekOrigin.Begin);
 
-            object DeserializedObject = binaryFormatter.Deserialize(memoryStream);
-            memoryStream.Close();
+            object DeserializedObject = BinFormatter.Deserialize(MemStream);
+            MemStream.Close();
 
             return DeserializedObject;
         }

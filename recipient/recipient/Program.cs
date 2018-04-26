@@ -64,27 +64,27 @@ namespace recipient
         static void EnviarClauPublica()
         {
             PublicKey = RSARecipient.ExportParameters(false);
-            byte[] publicKeyBytes = Serialize(PublicKey);
+            byte[] PublicKeyBytes = Serialize(PublicKey);
 
-            ClientNS.Write(publicKeyBytes, 0, publicKeyBytes.Length);
+            ClientNS.Write(PublicKeyBytes, 0, PublicKeyBytes.Length);
         }
 
 		//Rep la clau pública de l'emissor
         static void RepClauPublica()
         {
-            byte[] receivedBuffer = new byte[256];
-            int receivedBytes = ClientNS.Read(receivedBuffer, 0, receivedBuffer.Length);
+            byte[] ReceivedBuffer = new byte[2046];
+            int ReceivedBytes = ClientNS.Read(ReceivedBuffer, 0, ReceivedBuffer.Length);
 
-            ReceivedPublicKey = (RSAParameters)Deserialize(receivedBuffer);
+            ReceivedPublicKey = (RSAParameters)Deserialize(ReceivedBuffer);
         }
 
 		//Rep el missatge encriptat
         static void ReceiveEncryptedMessage()
         {
-            byte[] receivedBuffer = new byte[256];
-            int receivedBytes = ClientNS.Read(receivedBuffer, 0, receivedBuffer.Length);
+            byte[] ReceivedBuffer = new byte[2046];
+            int ReceivedBytes = ClientNS.Read(ReceivedBuffer, 0, ReceivedBuffer.Length);
 
-            ReceivedMsgEncrypted = (MessageEncryptedClass)Deserialize(receivedBuffer);
+            ReceivedMsgEncrypted = (MessageEncryptedClass)Deserialize(ReceivedBuffer);
         }
 
 		//Desxifra el missatge
@@ -104,9 +104,17 @@ namespace recipient
             var Decryptor = Aes.CreateDecryptor();
             byte[] MsgDecryptedBytes = Decryptor.TransformFinalBlock(ReceivedMsgEncrypted.EncryptedMsg, 0, ReceivedMsgEncrypted.EncryptedMsg.Length);
 
-
-
             //3. Comprovació de la integritat.
+            if (RSAReceived.VerifyData(MsgDecryptedBytes, new SHA1CryptoServiceProvider(), ReceivedMsgEncrypted.SignedHash))
+            {
+                StrDecryptedMsg = Encoding.UTF8.GetString(MsgDecryptedBytes);
+
+                Console.WriteLine("Incoming message: {0}", StrDecryptedMsg);
+            }
+            else
+            {
+                Console.WriteLine("DECRYPT ERROR");
+            }
             
         }
 
