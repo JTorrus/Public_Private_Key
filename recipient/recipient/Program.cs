@@ -24,15 +24,14 @@ namespace recipient
 
         //Criptografia
         static RSACryptoServiceProvider RSARecipient = new RSACryptoServiceProvider();
+        static RSACryptoServiceProvider RSAReceived = new RSACryptoServiceProvider();
         static MessageEncryptedClass MsgEncrypted = new MessageEncryptedClass();
+        static MessageEncryptedClass ReceivedMsgEncrypted = new MessageEncryptedClass();
         static RSAParameters PublicKey;
         static RSAParameters ReceivedPublicKey;
 
-        //Desencriptació
-        static string DecryptedIV;
-        static string DecryptedPublicKey;
-        static string DecryptedSymmetricKey;
-        static string DecryptedMessage;
+        //Missatge final desencriptat
+        static string StrDecryptedMsg;
 
         static void Main(string[] args)
         {
@@ -85,24 +84,27 @@ namespace recipient
             byte[] receivedBuffer = new byte[256];
             int receivedBytes = ClientNS.Read(receivedBuffer, 0, receivedBuffer.Length);
 
-            MsgEncrypted = (MessageEncryptedClass)Deserialize(receivedBuffer);
+            ReceivedMsgEncrypted = (MessageEncryptedClass)Deserialize(receivedBuffer);
         }
 
 		//Desxifra el missatge
         static void DesxifrarMissatge()
         {
-            RSACryptoServiceProvider RSAReceived = new RSACryptoServiceProvider();
             RSAReceived.ImportParameters(ReceivedPublicKey);
 
             //1. Desencripta la clau simètrica (key + IV)
-            byte[] DecryptedIVBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedIV, false);
-            byte[] DecryptedKeyBytes = RSARecipient.Decrypt(MsgEncrypted.EncryptedKey, false);
-
-            DecryptedIV = BytesToStringHex(DecryptedIVBytes);
-            DecryptedPublicKey = BytesToStringHex(DecryptedKeyBytes);
+            byte[] DecryptedIVBytes = RSARecipient.Decrypt(ReceivedMsgEncrypted.EncryptedIV, true);
+            byte[] DecryptedKeyBytes = RSARecipient.Decrypt(ReceivedMsgEncrypted.EncryptedKey, true);
 
             //2. Desencriptem el missatge
-            DecryptedMessage = BytesToStringHex(MsgEncrypted.EncryptedMsg);
+            AesCryptoServiceProvider Aes = new AesCryptoServiceProvider();
+            Aes.IV = DecryptedIVBytes;
+            Aes.Key = DecryptedKeyBytes;
+
+            var Decryptor = Aes.CreateDecryptor();
+            byte[] MsgDecryptedBytes = Decryptor.TransformFinalBlock(ReceivedMsgEncrypted.EncryptedMsg, 0, ReceivedMsgEncrypted.EncryptedMsg.Length);
+
+
 
             //3. Comprovació de la integritat.
             

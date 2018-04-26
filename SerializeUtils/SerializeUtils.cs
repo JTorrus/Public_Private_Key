@@ -19,6 +19,8 @@ namespace SerializeUtils
             binaryFormatter.Serialize(memoryStream, objectToSerialize);
             byte[] bytesToSend = memoryStream.ToArray();
 
+            memoryStream.Close();
+
             return bytesToSend;
         }
 
@@ -30,7 +32,10 @@ namespace SerializeUtils
             memoryStream.Write(bytesToDeserialize, 0, bytesToDeserialize.Length);
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            return binaryFormatter.Deserialize(memoryStream);
+            object DeserializedObject = binaryFormatter.Deserialize(memoryStream);
+            memoryStream.Close();
+
+            return DeserializedObject;
         }
     }
 }
